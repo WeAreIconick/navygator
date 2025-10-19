@@ -3,7 +3,7 @@
  * Plugin Name:       NavyGator
  * Plugin URI:        https://github.com/yourusername/navygator
  * Description:       A beautiful, floating table of contents block that automatically generates navigation from your page headings. Features a sticky sidebar on desktop and a mobile-friendly toggle drawer.
- * Version:           1.0.0
+ * Version:           1.0.1
  * Requires at least: 6.0
  * Requires PHP:      7.4
  * Author:            Your Name
@@ -18,7 +18,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-define( 'NAVYGATOR_VERSION', '1.0.0' );
+define( 'NAVYGATOR_VERSION', '1.0.1' );
 define( 'NAVYGATOR_PLUGIN_DIR', plugin_dir_path( __FILE__ ) );
 define( 'NAVYGATOR_PLUGIN_URL', plugin_dir_url( __FILE__ ) );
 
@@ -245,13 +245,46 @@ function navygator_enqueue_frontend_assets() {
 	if ( file_exists( $view_asset_file ) ) {
 		$view_asset = require $view_asset_file;
 		
+		// Add cache busting with version and file modification time
+		$view_js_path = NAVYGATOR_PLUGIN_DIR . 'build/view.js';
+		$cache_buster = NAVYGATOR_VERSION . '.' . ( file_exists( $view_js_path ) ? filemtime( $view_js_path ) : time() );
+		
 		wp_enqueue_script(
 			'navygator-view',
 			NAVYGATOR_PLUGIN_URL . 'build/view.js',
 			$view_asset['dependencies'],
-			$view_asset['version'],
+			$cache_buster,
 			true
+		);
+	}
+	
+	// Enqueue CSS with cache busting
+	$style_css_path = NAVYGATOR_PLUGIN_DIR . 'build/style-index.css';
+	if ( file_exists( $style_css_path ) ) {
+		$css_cache_buster = NAVYGATOR_VERSION . '.' . filemtime( $style_css_path );
+		
+		wp_enqueue_style(
+			'navygator-style',
+			NAVYGATOR_PLUGIN_URL . 'build/style-index.css',
+			array(),
+			$css_cache_buster
 		);
 	}
 }
 add_action( 'wp_enqueue_scripts', 'navygator_enqueue_frontend_assets' );
+
+function navygator_enqueue_editor_assets() {
+	// Enqueue editor CSS with cache busting
+	$editor_css_path = NAVYGATOR_PLUGIN_DIR . 'build/index.css';
+	if ( file_exists( $editor_css_path ) ) {
+		$editor_cache_buster = NAVYGATOR_VERSION . '.' . filemtime( $editor_css_path );
+		
+		wp_enqueue_style(
+			'navygator-editor-style',
+			NAVYGATOR_PLUGIN_URL . 'build/index.css',
+			array(),
+			$editor_cache_buster
+		);
+	}
+}
+add_action( 'enqueue_block_editor_assets', 'navygator_enqueue_editor_assets' );

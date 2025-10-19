@@ -19,18 +19,107 @@
 		background: rgba(255, 255, 255, 0.95);
 		backdrop-filter: blur(10px);
 		border-radius: 12px;
-		padding: 20px;
+		padding: 40px;
 		box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1), 0 0 0 1px rgba(0, 0, 0, 0.05);
 		z-index: 1000;
 		transition: all 0.3s ease;
+		opacity: 0;
+		visibility: hidden;
+		transform: translateX(100%);
+
+		&.is-open {
+			opacity: 1;
+			visibility: visible;
+			transform: translateX(0);
+		}
 
 		&:hover {
 			box-shadow: 0 6px 30px rgba(0, 0, 0, 0.15), 0 0 0 1px rgba(0, 0, 0, 0.08);
 		}
 	}
 
-	.navygator-toc-toggle,
-	.navygator-toc-close,
+	.navygator-toc-toggle {
+		/* Extracted from Tailwind button styles */
+		display: inline-flex;
+		align-items: center;
+		justify-content: center;
+		gap: 8px;
+		white-space: nowrap;
+		font-size: 14px;
+		font-weight: 500;
+		transition: all 0.2s ease;
+		outline: none;
+		border: 1px solid hsl(214.3 31.8% 91.4%);
+		background: hsl(0 0% 100%);
+		color: hsl(222.2 84% 4.9%);
+		width: 36px;
+		height: 36px;
+		border-radius: 6px;
+		position: fixed;
+		top: 24px;
+		right: 24px;
+		box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+		z-index: 50;
+		cursor: pointer;
+
+		&:hover {
+			background: hsl(210 40% 98%);
+			color: hsl(222.2 84% 4.9%);
+		}
+
+		&:focus-visible {
+			border-color: hsl(222.2 84% 4.9%);
+			box-shadow: 0 0 0 3px rgba(222.2, 84%, 4.9%, 0.5);
+		}
+
+		&:disabled {
+			pointer-events: none;
+			opacity: 0.5;
+		}
+
+		svg {
+			width: 20px;
+			height: 20px;
+			pointer-events: none;
+		}
+
+		/* Dark mode support */
+		@media (prefers-color-scheme: dark) {
+			background: rgba(255, 255, 255, 0.1);
+			border-color: hsl(217.2 32.6% 17.5%);
+			color: hsl(210 40% 98%);
+
+			&:hover {
+				background: rgba(255, 255, 255, 0.2);
+			}
+		}
+	}
+
+	.navygator-toc-close {
+		position: absolute;
+		top: 16px;
+		right: 16px;
+		width: 32px;
+		height: 32px;
+		border-radius: 50%;
+		background: #f0f0f0;
+		border: none;
+		cursor: pointer;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		transition: all 0.2s ease;
+
+		&:hover {
+			background: #e0e0e0;
+		}
+
+		svg {
+			width: 20px;
+			height: 20px;
+		}
+	}
+
 	.navygator-toc-backdrop {
 		display: none;
 	}
@@ -47,7 +136,7 @@
 		overflow-y: auto;
 		background: #fff;
 		border-radius: 20px 20px 0 0;
-		padding: 24px;
+		padding: 48px;
 		box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.2);
 		z-index: 10001;
 		transform: translateY(100%);
@@ -59,36 +148,59 @@
 	}
 
 	.navygator-toc-toggle {
+		/* Extracted from Tailwind button styles - Mobile version */
+		display: inline-flex;
+		align-items: center;
+		justify-content: center;
+		gap: 8px;
+		white-space: nowrap;
+		font-size: 14px;
+		font-weight: 500;
+		transition: all 0.2s ease;
+		outline: none;
+		border: 1px solid hsl(214.3 31.8% 91.4%);
+		background: hsl(0 0% 100%);
+		color: hsl(222.2 84% 4.9%);
+		width: 48px;
+		height: 48px;
+		border-radius: 6px;
 		position: fixed;
 		bottom: 20px;
 		right: 20px;
-		width: 56px;
-		height: 56px;
-		border-radius: 50%;
-		background: #0073aa;
-		color: #fff;
-		border: none;
-		box-shadow: 0 4px 12px rgba(0, 115, 170, 0.4);
-		cursor: pointer;
-		display: flex;
-		align-items: center;
-		justify-content: center;
+		box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
 		z-index: 10000;
-		transition: all 0.3s ease;
+		cursor: pointer;
 
 		&:hover {
-			background: #005a87;
-			box-shadow: 0 6px 16px rgba(0, 115, 170, 0.5);
-			transform: scale(1.05);
+			background: hsl(210 40% 98%);
+			color: hsl(222.2 84% 4.9%);
 		}
 
-		&:active {
-			transform: scale(0.95);
+		&:focus-visible {
+			border-color: hsl(222.2 84% 4.9%);
+			box-shadow: 0 0 0 3px rgba(222.2, 84%, 4.9%, 0.5);
+		}
+
+		&:disabled {
+			pointer-events: none;
+			opacity: 0.5;
 		}
 
 		svg {
 			width: 24px;
 			height: 24px;
+			pointer-events: none;
+		}
+
+		/* Dark mode support */
+		@media (prefers-color-scheme: dark) {
+			background: rgba(255, 255, 255, 0.1);
+			border-color: hsl(217.2 32.6% 17.5%);
+			color: hsl(210 40% 98%);
+
+			&:hover {
+				background: rgba(255, 255, 255, 0.2);
+			}
 		}
 	}
 
@@ -231,6 +343,7 @@ html {
 .navygator-toc {
 	scrollbar-width: thin;
 	scrollbar-color: rgba(0, 0, 0, 0.2) transparent;
+	scroll-behavior: smooth;
 
 	&::-webkit-scrollbar {
 		width: 6px;

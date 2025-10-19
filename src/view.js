@@ -31,27 +31,43 @@
 		const backdrop = tocWrapper.querySelector( '.navygator-toc-backdrop' );
 		const tocLinks = tocWrapper.querySelectorAll( '.navygator-toc-link' );
 
-		// Mobile toggle functionality
+		// Toggle functionality for both mobile and desktop
 		if ( toggleBtn ) {
-			toggleBtn.addEventListener( 'click', openDrawer );
+			toggleBtn.addEventListener( 'click', function() {
+				if ( window.innerWidth <= 768 ) {
+					openDrawer();
+				} else {
+					toggleDesktopToc();
+				}
+			});
 		}
 
 		if ( closeBtn ) {
-			closeBtn.addEventListener( 'click', closeDrawer );
+			closeBtn.addEventListener( 'click', function() {
+				if ( window.innerWidth <= 768 ) {
+					closeDrawer();
+				} else {
+					closeDesktopToc();
+				}
+			});
 		}
 
 		if ( backdrop ) {
 			backdrop.addEventListener( 'click', closeDrawer );
 		}
 
-		// Close drawer on escape key
+		// Close on escape key
 		document.addEventListener( 'keydown', function( e ) {
 			if ( e.key === 'Escape' && toc && toc.classList.contains( 'is-open' ) ) {
-				closeDrawer();
+				if ( window.innerWidth <= 768 ) {
+					closeDrawer();
+				} else {
+					closeDesktopToc();
+				}
 			}
 		} );
 
-		// Smooth scroll and close drawer on link click
+		// Smooth scroll and close on link click
 		tocLinks.forEach( function( link ) {
 			link.addEventListener( 'click', function( e ) {
 				e.preventDefault();
@@ -60,9 +76,12 @@
 				const targetElement = document.getElementById( targetId );
 
 				if ( targetElement ) {
-					// Close drawer on mobile
+					// Close TOC on mobile
 					if ( window.innerWidth <= 768 ) {
 						closeDrawer();
+					} else {
+						// On desktop, close TOC after clicking a link
+						closeDesktopToc();
 					}
 
 					// Smooth scroll to target
@@ -104,6 +123,28 @@
 			}
 			document.body.classList.remove( 'navygator-toc-open' );
 		}
+
+		function toggleDesktopToc() {
+			if ( toc ) {
+				if ( toc.classList.contains( 'is-open' ) ) {
+					closeDesktopToc();
+				} else {
+					openDesktopToc();
+				}
+			}
+		}
+
+		function openDesktopToc() {
+			if ( toc ) {
+				toc.classList.add( 'is-open' );
+			}
+		}
+
+		function closeDesktopToc() {
+			if ( toc ) {
+				toc.classList.remove( 'is-open' );
+			}
+		}
 	}
 
 	/**
@@ -141,6 +182,7 @@
 				if ( entry.isIntersecting ) {
 					activeHeading = entry.target;
 					updateActiveLink( entry.target.id, tocLinks );
+					scrollTocToActiveLink( entry.target.id, tocLinks );
 				}
 			} );
 		}, observerOptions );
@@ -151,7 +193,9 @@
 		} );
 
 		// Initial active state based on scroll position
-		updateActiveLink( getActiveHeadingId( headings ), tocLinks );
+		const initialActiveId = getActiveHeadingId( headings );
+		updateActiveLink( initialActiveId, tocLinks );
+		scrollTocToActiveLink( initialActiveId, tocLinks );
 	}
 
 	/**
@@ -167,6 +211,50 @@
 				link.classList.remove( 'is-active' );
 			}
 		} );
+	}
+
+	/**
+	 * Scroll TOC content to keep active link visible
+	 */
+	function scrollTocToActiveLink( activeId, tocLinks ) {
+		const activeLink = Array.from( tocLinks ).find( function( link ) {
+			return link.getAttribute( 'href' ).substring( 1 ) === activeId;
+		} );
+
+		if ( ! activeLink ) {
+			return;
+		}
+
+		const toc = document.querySelector( '.navygator-toc' );
+		if ( ! toc ) {
+			return;
+		}
+
+		// Get the position of the active link relative to the TOC container
+		const tocRect = toc.getBoundingClientRect();
+		const linkRect = activeLink.getBoundingClientRect();
+		
+		// Calculate if the link is visible within the TOC container
+		const linkTop = linkRect.top - tocRect.top;
+		const linkBottom = linkRect.bottom - tocRect.top;
+		const tocHeight = tocRect.height;
+		
+		// If the link is not fully visible, scroll to center it
+		if ( linkTop < 0 || linkBottom > tocHeight ) {
+			const scrollTop = toc.scrollTop;
+			const linkOffset = activeLink.offsetTop;
+			const tocCenter = tocHeight / 2;
+			const linkHeight = linkRect.height;
+			
+			// Calculate the ideal scroll position to center the link
+			const targetScrollTop = linkOffset - tocCenter + ( linkHeight / 2 );
+			
+			// Smooth scroll to the target position
+			toc.scrollTo( {
+				top: Math.max( 0, targetScrollTop ),
+				behavior: 'smooth'
+			} );
+		}
 	}
 
 	/**
