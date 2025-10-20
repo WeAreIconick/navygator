@@ -64,8 +64,9 @@ function navygator_render_block( $attributes, $content ) {
 	$toc_html = '<div class="navygator-toc-wrapper">';
 	
 	$toc_html .= '<button class="navygator-toc-toggle" aria-label="' . esc_attr__( 'Toggle Table of Contents', 'navygator' ) . '">';
-	$toc_html .= '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">';
-	$toc_html .= '<path d="M3 4h18M3 12h18M3 20h18" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>';
+	$toc_html .= 'Contents';
+	$toc_html .= '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">';
+	$toc_html .= '<path d="m18 15-6-6-6 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>';
 	$toc_html .= '</svg>';
 	$toc_html .= '</button>';
 	

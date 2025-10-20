@@ -11,6 +11,12 @@
 ( function() {
 	'use strict';
 
+	// Prevent duplicate execution
+	if ( window.navygatorInitialized ) {
+		return;
+	}
+	window.navygatorInitialized = true;
+
 	// Wait for DOM to be ready
 	if ( document.readyState === 'loading' ) {
 		document.addEventListener( 'DOMContentLoaded', init );
@@ -33,7 +39,8 @@
 
 		// Toggle functionality for both mobile and desktop
 		if ( toggleBtn ) {
-			toggleBtn.addEventListener( 'click', function() {
+			toggleBtn.addEventListener( 'click', function( e ) {
+				e.preventDefault();
 				if ( window.innerWidth <= 768 ) {
 					openDrawer();
 				} else {
@@ -126,7 +133,8 @@
 
 		function toggleDesktopToc() {
 			if ( toc ) {
-				if ( toc.classList.contains( 'is-open' ) ) {
+				const isOpen = toc.classList.contains( 'is-open' );
+				if ( isOpen ) {
 					closeDesktopToc();
 				} else {
 					openDesktopToc();
@@ -137,12 +145,38 @@
 		function openDesktopToc() {
 			if ( toc ) {
 				toc.classList.add( 'is-open' );
+				
+				// Smooth animation using CSS transitions
+				toc.style.setProperty('opacity', '1', 'important');
+				toc.style.setProperty('visibility', 'visible', 'important');
+				toc.style.setProperty('transform', 'translateY(0) scale(1)', 'important');
+				toc.style.setProperty('transition', 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)', 'important');
+				
+				// Add backdrop with fade-in animation
+				if ( backdrop ) {
+					backdrop.style.setProperty('opacity', '1', 'important');
+					backdrop.style.setProperty('visibility', 'visible', 'important');
+					backdrop.style.setProperty('transition', 'all 0.3s ease', 'important');
+				}
 			}
 		}
 
 		function closeDesktopToc() {
 			if ( toc ) {
 				toc.classList.remove( 'is-open' );
+				
+				// Smooth animation using CSS transitions
+				toc.style.setProperty('opacity', '0', 'important');
+				toc.style.setProperty('visibility', 'hidden', 'important');
+				toc.style.setProperty('transform', 'translateY(-10px) scale(0.95)', 'important');
+				toc.style.setProperty('transition', 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)', 'important');
+				
+				// Hide backdrop with fade-out animation
+				if ( backdrop ) {
+					backdrop.style.setProperty('opacity', '0', 'important');
+					backdrop.style.setProperty('visibility', 'hidden', 'important');
+					backdrop.style.setProperty('transition', 'all 0.3s ease', 'important');
+				}
 			}
 		}
 	}
